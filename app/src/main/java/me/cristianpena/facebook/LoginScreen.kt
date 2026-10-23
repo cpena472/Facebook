@@ -1,40 +1,53 @@
 package me.cristianpena.facebook
 
-
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// Colores oficiales de Facebook
-val FacebookBlue = Color(0xFF1877F2)
-private val FacebookLightBlue = Color(0xFF42B72A) // verde para "Crear cuenta"
-private val FacebookGray = Color(0xFFF0F2F5)
+private val FacebookBlue = Color(0xFF0866FF)
+private val FacebookGreen = Color(0xFF42B72A)
+private val FacebookTextGray = Color(0xFF65676B)
 private val FacebookBorderGray = Color(0xFFCCD0D5)
-private val FacebookTextGray = Color(0xFF606770)
-private val FacebookDarkText = Color(0xFF1C1E21)
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun FacebookLoginScreen() {
+fun FacebookLoginScreen(
+    onLoginClick: (email: String, password: String) -> Unit = { _, _ -> },
+    onForgotPasswordClick: () -> Unit = {},
+    onCreateAccountClick: () -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -43,24 +56,24 @@ fun FacebookLoginScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(56.dp))
 
-        // Logo de Facebook (texto estilizado)
+
         Text(
             text = "facebook",
-            color = FacebookBlue,
-            fontSize = 52.sp,
+            fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = (-1).sp
+            color = FacebookBlue
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Campo de Email/Teléfono
+
         FacebookTextField(
             value = email,
             onValueChange = { email = it },
@@ -71,7 +84,7 @@ fun FacebookLoginScreen() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Campo de Contraseña
+
         FacebookTextField(
             value = password,
             onValueChange = { password = it },
@@ -83,91 +96,87 @@ fun FacebookLoginScreen() {
             onTogglePasswordVisibility = { passwordVisible = !passwordVisible }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        // Botón Iniciar sesión
+
         Button(
-            onClick = {  },
+            onClick = { onLoginClick(email, password) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = FacebookBlue),
+                .height(44.dp),
             shape = RoundedCornerShape(6.dp),
-            //enabled = email.isNotBlank() && password.isNotBlank()
+            colors = ButtonDefaults.buttonColors(containerColor = FacebookBlue)
         ) {
             Text(
                 text = "Iniciar sesión",
-                color = Color.White,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Link "¿Olvidaste tu contraseña?"
-        TextButton(onClick = {}) {
-            Text(
-                text = "¿Olvidaste tu contraseña?",
-                color = FacebookTextGray,
-                fontSize = 14.sp
-            )
-        }
+        Text(
+            text = "¿Olvidaste tu contraseña?",
+            fontSize = 13.sp,
+            color = Color.Black,
+            modifier = Modifier.clickable { onForgotPasswordClick() }
+        )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Divisor "O"
+
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = FacebookBorderGray,
-                thickness = 1.dp
+                color = FacebookBorderGray
             )
             Text(
                 text = "o",
-                modifier = Modifier.padding(horizontal = 12.dp),
+                fontSize = 12.sp,
                 color = FacebookTextGray,
-                fontSize = 14.sp
+                modifier = Modifier.padding(horizontal = 12.dp)
             )
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = FacebookBorderGray,
-                thickness = 1.dp
+                color = FacebookBorderGray
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón Crear cuenta nueva
+
         Button(
-            onClick = {},
+            onClick = onCreateAccountClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = FacebookLightBlue),
-            shape = RoundedCornerShape(6.dp)
+                .height(44.dp),
+            shape = RoundedCornerShape(6.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = FacebookGreen)
         ) {
             Text(
                 text = "Crear cuenta nueva",
-                color = Color.White,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
         }
 
+
         Spacer(modifier = Modifier.weight(1f))
 
-        // Footer con marca registrada
         Text(
-            text = "Meta © 2024",
-            modifier = Modifier.padding(bottom = 24.dp),
-            color = FacebookTextGray,
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center
+            text = "Meta © 2026",
+            fontSize = 11.sp,
+            color = FacebookTextGray
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
@@ -176,8 +185,8 @@ private fun FacebookTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    keyboardType: KeyboardType,
-    imeAction: ImeAction,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Next,
     isPassword: Boolean = false,
     passwordVisible: Boolean = false,
     onTogglePasswordVisibility: () -> Unit = {}
@@ -190,7 +199,7 @@ private fun FacebookTextField(
             Text(
                 text = placeholder,
                 color = FacebookTextGray,
-                fontSize = 16.sp
+                fontSize = 14.sp
             )
         },
         singleLine = true,
@@ -203,9 +212,14 @@ private fun FacebookTextField(
         ),
         trailingIcon = if (isPassword) {
             {
-                IconButton(onClick = onTogglePasswordVisibility) {
-
-                }
+                Text(
+                    text = if (passwordVisible) "Ocultar" else "Mostrar",
+                    fontSize = 12.sp,
+                    color = FacebookBlue,
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .clickable { onTogglePasswordVisibility() }
+                )
             }
         } else null,
         colors = OutlinedTextFieldDefaults.colors(
@@ -216,4 +230,10 @@ private fun FacebookTextField(
             cursorColor = FacebookBlue
         )
     )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewFacebookLoginScreen() {
+    FacebookLoginScreen()
 }
